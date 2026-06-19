@@ -1,4 +1,4 @@
-const { add, sub, mul, div, main } = require('../calculator');
+const { add, sub, mul, div, modulo, power, squareRoot, main } = require('../calculator');
 
 describe('calculator functions', () => {
   describe('add()', () => {
@@ -29,6 +29,24 @@ describe('calculator functions', () => {
     test('division by zero throws an error', () => expect(() => div(5, 0)).toThrow('Division by zero'));
   });
 
+  describe('modulo()', () => {
+    test('modulo of two integers', () => expect(modulo(10, 3)).toBe(1));
+    test('modulo with negative dividend', () => expect(modulo(-10, 3)).toBe(-1));
+    test('modulo by zero throws', () => expect(() => modulo(5, 0)).toThrow('Division by zero'));
+  });
+
+  describe('power()', () => {
+    test('power positive integers', () => expect(power(2, 10)).toBe(1024));
+    test('power with zero exponent', () => expect(power(5, 0)).toBe(1));
+    test('power with negative exponent', () => expect(power(2, -2)).toBeCloseTo(0.25, 10));
+  });
+
+  describe('squareRoot()', () => {
+    test('square root of perfect square', () => expect(squareRoot(9)).toBe(3));
+    test('square root of float', () => expect(squareRoot(2.25)).toBeCloseTo(1.5, 10));
+    test('square root of negative throws', () => expect(() => squareRoot(-4)).toThrow('Cannot compute square root of negative number'));
+  });
+
   describe('CLI main()', () => {
     test('main returns result for add', () => {
       const result = main(['node', 'src/calculator.js', 'add', '2', '3']);
@@ -44,6 +62,25 @@ describe('calculator functions', () => {
 
     test('main handles float strings', () => {
       expect(main(['node', 'src/calculator.js', 'div', '7.5', '2.5'])).toBeCloseTo(3.0, 10);
+    });
+
+    test('main supports modulo and symbols', () => {
+      expect(main(['node', 'src/calculator.js', 'mod', '5', '2'])).toBe(1);
+      expect(main(['node', 'src/calculator.js', '%', '7', '3'])).toBe(1);
+    });
+
+    test('main supports power and symbol', () => {
+      expect(main(['node', 'src/calculator.js', 'pow', '2', '3'])).toBe(8);
+      expect(main(['node', 'src/calculator.js', '^', '3', '3'])).toBe(27);
+    });
+
+    test('main supports sqrt as unary', () => {
+      expect(main(['node', 'src/calculator.js', 'sqrt', '16'])).toBe(4);
+    });
+
+    test('main handles sqrt negative via error exit', () => {
+      // main exits process on error; to test, call squareRoot directly for error expectation
+      expect(() => squareRoot(-1)).toThrow('Cannot compute square root of negative number');
     });
   });
 });

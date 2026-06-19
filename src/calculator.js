@@ -36,32 +36,73 @@ function div(a, b) {
   return a / b;
 }
 
+function modulo(a, b) {
+  if (b === 0) throw new Error('Division by zero');
+  return a % b;
+}
+
+function power(base, exponent) {
+  return Math.pow(base, exponent);
+}
+
+function squareRoot(n) {
+  if (n < 0) throw new Error('Cannot compute square root of negative number');
+  return Math.sqrt(n);
+}
+
 // CLI handling
 function printUsage() {
-  console.error('Usage: node src/calculator.js <op> <num1> <num2>');
-  console.error('  <op>  : add | sub | mul | div');
+  console.error('Usage: node src/calculator.js <op> <num1> [<num2>]');
+  console.error('  <op>  : add | sub | mul | div | modulo | power | sqrt');
+  console.error('  For binary ops provide two operands; for sqrt provide one operand.');
   console.error('Examples:');
   console.error('  node src/calculator.js add 2 3');
+  console.error('  node src/calculator.js sqrt 9');
 }
 
 function main(argv) {
   const args = argv.slice(2);
-  if (args.length !== 3) {
+  // Accept either 2 args (op + one operand for sqrt) or 3 args (op + two operands)
+  if (args.length !== 2 && args.length !== 3) {
     printUsage();
     process.exit(1);
   }
 
   const [op, aStr, bStr] = args;
-  const a = Number(aStr);
-  const b = Number(bStr);
-
-  if (Number.isNaN(a) || Number.isNaN(b)) {
-    console.error('Error: both operands must be valid numbers.');
-    process.exit(1);
-  }
 
   try {
     let result;
+
+    // unary sqrt: expects one operand
+    if (args.length === 2) {
+      const n = Number(aStr);
+      if (Number.isNaN(n)) {
+        console.error('Error: operand must be a valid number.');
+        process.exit(1);
+      }
+
+      switch (op) {
+        case 'sqrt':
+          result = squareRoot(n);
+          break;
+        default:
+          console.error(`Error: unknown unary operation '${op}'. Use sqrt for unary operations.`);
+          process.exit(1);
+      }
+
+      console.log(result);
+      return result;
+    }
+
+    // binary operations: expect two operands
+    const a = Number(aStr);
+    const b = Number(bStr);
+
+    if (Number.isNaN(a) || Number.isNaN(b)) {
+      console.error('Error: both operands must be valid numbers.');
+      process.exit(1);
+    }
+
     switch (op) {
       case 'add':
       case '+':
@@ -80,13 +121,21 @@ function main(argv) {
       case '/':
         result = div(a, b);
         break;
+      case 'mod':
+      case 'modulo':
+      case '%':
+        result = modulo(a, b);
+        break;
+      case 'pow':
+      case 'power':
+      case '^':
+        result = power(a, b);
+        break;
       default:
-        console.error(`Error: unknown operation '${op}'. Use add, sub, mul or div.`);
+        console.error(`Error: unknown operation '${op}'. Use add, sub, mul, div, modulo, power or sqrt.`);
         process.exit(1);
     }
 
-    // Print result
-    // Use console.log so it goes to stdout and can be captured in scripts
     console.log(result);
     return result;
   } catch (err) {
@@ -101,4 +150,4 @@ if (require.main === module) {
 }
 
 // Export for tests or programmatic usage
-module.exports = { add, sub, mul, div, main };
+module.exports = { add, sub, mul, div, modulo, power, squareRoot, main };
