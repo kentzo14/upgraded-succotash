@@ -31,18 +31,21 @@ describe('calculator functions', () => {
 
   describe('modulo()', () => {
     test('modulo of two integers', () => expect(modulo(10, 3)).toBe(1));
+    test('modulo with 5 % 2 (example)', () => expect(modulo(5, 2)).toBe(1));
     test('modulo with negative dividend', () => expect(modulo(-10, 3)).toBe(-1));
     test('modulo by zero throws', () => expect(() => modulo(5, 0)).toThrow('Division by zero'));
   });
 
   describe('power()', () => {
     test('power positive integers', () => expect(power(2, 10)).toBe(1024));
+    test('power with 2 ^ 3 (example)', () => expect(power(2, 3)).toBe(8));
     test('power with zero exponent', () => expect(power(5, 0)).toBe(1));
     test('power with negative exponent', () => expect(power(2, -2)).toBeCloseTo(0.25, 10));
   });
 
   describe('squareRoot()', () => {
     test('square root of perfect square', () => expect(squareRoot(9)).toBe(3));
+    test('square root with √16 (example)', () => expect(squareRoot(16)).toBe(4));
     test('square root of float', () => expect(squareRoot(2.25)).toBeCloseTo(1.5, 10));
     test('square root of negative throws', () => expect(() => squareRoot(-4)).toThrow('Cannot compute square root of negative number'));
   });
